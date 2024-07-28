@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Settings - Crown Graphics</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Settings</h1>
+        <div class="card">
+            <h2>Upload Frame Image</h2>
+            <input type="file" id="frame-image" accept="image/png">
+            <button id="upload-frame" class="btn-primary">Upload Frame</button>
+            <div id="frame-dimensions" class="hidden">
+                <p>Width: <span id="frame-width-display">0</span> px</p>
+                <p>Height: <span id="frame-height-display">0</span> px</p>
+            </div>
+        </div>
+        <div class="card">
+            <h2>Set Frame Dimensions</h2>
+            <label for="frame-width">Width (px):</label>
+            <input type="number" id="frame-width" placeholder="Enter width in pixels">
+            <label for="frame-height">Height (px):</label>
+            <input type="number" id="frame-height" placeholder="Enter height in pixels">
+            <button id="save-settings" class="btn-primary">Save Settings</button>
+        </div>
+        <div class="status-message hidden" id="status-message"></div>
+    </div>
+    <script src="admin.js"></script>
+</body>
+</html>
