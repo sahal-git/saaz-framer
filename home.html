@@ -3,30 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Program Framer - Crown Graphics</title>
-    <link rel="stylesheet" href="home.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <title>Image Merger App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Program Framer</h1>
+        <h1>Image Merger App</h1>
         <div class="upload-section">
-            <input type="file" id="image" accept="image/*">
-            <button type="button" id="upload-button" class="btn-primary">Upload & Crop</button>
+            <label for="primary-image" class="upload-label">Upload Primary Image</label>
+            <input type="file" id="primary-image" accept="image/*">
+
+            <label for="secondary-images" class="upload-label">Upload Secondary Images</label>
+            <input type="file" id="secondary-images" accept="image/*" multiple>
         </div>
-        <div id="image-preview" class="hidden">
-            <img id="primary-img" alt="Primary Image">
+        <div class="preview-section">
+            <img id="secondary-preview" style="display: none;">
+            <canvas id="canvas" style="display: none;"></canvas>
         </div>
-        <div class="action-buttons hidden">
-            <button id="crop-image" class="btn-primary">Crop</button>
-            <button id="download-clear" class="btn-secondary">Download & Clear</button>
-        </div>
-        <div class="final-image-preview hidden">
-            <img id="final-preview" alt="Final Image">
+        <div class="buttons">
+            <button id="crop-button" style="display: none;">Crop & Merge</button>
         </div>
     </div>
-    <canvas id="canvas" class="hidden"></canvas>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    <script src="home.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="scripts.js"></script>
 </body>
 </html>
