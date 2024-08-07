@@ -2,21 +2,24 @@ let cropper;
 let secondaryImages = [];
 let currentIndex = 0;
 let primaryImageDimensions = { width: 0, height: 0 };
-let croppedImage; // Declare croppedImage here
+let croppedImage;
+let primaryImageFile = null; // Variable to store the primary image file
+const HD_WIDTH = 1920;
+const HD_HEIGHT = 1080;
 
 document.getElementById('primary-image').addEventListener('change', handlePrimaryImage);
 document.getElementById('secondary-images').addEventListener('change', handleSecondaryImages);
 
 function handlePrimaryImage(event) {
-    const primaryInput = event.target.files[0];
-    if (primaryInput) {
+    primaryImageFile = event.target.files[0]; // Store the selected primary image file
+    if (primaryImageFile) {
         const primaryImage = new Image();
         primaryImage.onload = () => {
             primaryImageDimensions.width = primaryImage.width;
             primaryImageDimensions.height = primaryImage.height;
             console.log('Primary image dimensions:', primaryImageDimensions);
         };
-        primaryImage.src = URL.createObjectURL(primaryInput);
+        primaryImage.src = URL.createObjectURL(primaryImageFile);
     } else {
         console.log('No primary image selected.');
     }
@@ -41,7 +44,7 @@ function processNextImage() {
 
         secondaryPreview.src = URL.createObjectURL(secondaryImage);
         secondaryPreview.style.display = 'block';
-        secondaryPreview.style.width = '70%'; // Set preview size to 70%
+        secondaryPreview.style.width = '70%';
         console.log('Processing image:', secondaryImage.name);
 
         if (cropper) {
@@ -49,54 +52,56 @@ function processNextImage() {
             console.log('Cropper destroyed.');
         }
 
-        cropper = new Cropper(secondaryPreview, {
-            aspectRatio: primaryImageDimensions.width / primaryImageDimensions.height,
-            viewMode: 1,
-            responsive: true,
-            zoomable: true,
-            scalable: true,
-            movable: true,
-            cropBoxResizable: true,
-            cropBoxMovable: true,
-            ready() {
-                console.log('Cropper ready.');
-                const containerData = cropper.getContainerData();
-                const cropBoxData = cropper.getCropBoxData();
-                const aspectRatio = primaryImageDimensions.width / primaryImageDimensions.height;
-                const newCropBoxWidth = containerData.width;
-                const newCropBoxHeight = containerData.width / aspectRatio;
+        secondaryPreview.onload = () => {
+            const secondaryImageWidth = secondaryPreview.naturalWidth;
+            const secondaryImageHeight = secondaryPreview.naturalHeight;
+            console.log('Secondary image dimensions:', { width: secondaryImageWidth, height: secondaryImageHeight });
 
-                cropper.setCropBoxData({
-                    left: cropBoxData.left,
-                    top: (containerData.height - newCropBoxHeight) / 2,
-                    width: newCropBoxWidth,
-                    height: newCropBoxHeight
-                });
-                console.log('Crop box data set:', cropper.getCropBoxData());
-            }
-        });
+            const aspectRatio = primaryImageDimensions.width / primaryImageDimensions.height;
+            const cropWidth = Math.min(HD_WIDTH, secondaryImageWidth);
+            const cropHeight = cropWidth / aspectRatio;
 
-        cropButton.style.display = 'block';
-        cropButton.onclick = cropImage;
-        console.log('Crop button set up.');
+            cropper = new Cropper(secondaryPreview, {
+                aspectRatio: aspectRatio,
+                viewMode: 1,
+                responsive: true,
+                zoomable: true,
+                scalable: true,
+                movable: true,
+                cropBoxResizable: true,
+                cropBoxMovable: true,
+                ready() {
+                    console.log('Cropper ready.');
+                    cropper.setCropBoxData({
+                        width: cropWidth,
+                        height: cropHeight,
+                    });
+                    console.log('Crop box data set:', cropper.getCropBoxData());
+                }
+            });
+
+            cropButton.style.display = 'block';
+            cropButton.onclick = cropImage;
+            console.log('Crop button set up.');
+        };
     } else {
-        alert('All images processed.');
+        location.reload(); // Reload the page after processing all images
     }
 }
 
 function cropImage() {
     console.log('Crop button clicked.');
     const croppedCanvas = cropper.getCroppedCanvas({
-        width: primaryImageDimensions.width,
-        height: primaryImageDimensions.height,
+        width: Math.min(HD_WIDTH, cropper.getCanvasData().naturalWidth),
+        height: Math.min(HD_HEIGHT, cropper.getCanvasData().naturalHeight),
     });
 
     const ctx = document.getElementById('canvas').getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas before drawing
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     croppedCanvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
-        croppedImage = new Image(); // Define croppedImage here
+        croppedImage = new Image();
 
         croppedImage.onload = () => {
             console.log('Cropped image loaded.');
@@ -104,9 +109,22 @@ function cropImage() {
             document.getElementById('secondary-preview').style.display = 'none';
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
-            ctx.canvas.width = croppedImage.width;
-            ctx.canvas.height = croppedImage.height;
-            ctx.drawImage(croppedImage, 0, 0);
+
+            const primaryAspectRatio = primaryImageDimensions.width / primaryImageDimensions.height;
+            let canvasWidth, canvasHeight;
+
+            if (HD_WIDTH / HD_HEIGHT > primaryAspectRatio) {
+                canvasWidth = HD_HEIGHT * primaryAspectRatio;
+                canvasHeight = HD_HEIGHT;
+            } else {
+                canvasWidth = HD_WIDTH;
+                canvasHeight = HD_WIDTH / primaryAspectRatio;
+            }
+
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            
+            ctx.drawImage(croppedImage, 0, 0, canvasWidth, canvasHeight);
             overlayPrimaryImage();
         };
         croppedImage.src = url;
@@ -115,27 +133,39 @@ function cropImage() {
 
 function overlayPrimaryImage() {
     console.log('Overlaying primary image.');
-    const primaryInput = document.getElementById('primary-image');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
-    if (primaryInput.files && primaryInput.files[0]) {
+    if (primaryImageFile) {
         const primaryImage = new Image();
 
         primaryImage.onload = () => {
             if (croppedImage) {
-                ctx.drawImage(croppedImage, 0, 0); // Draw secondary image first
+                ctx.drawImage(croppedImage, 0, 0, canvas.width, canvas.height);
             }
-            ctx.drawImage(primaryImage, 0, 0, primaryImageDimensions.width, primaryImageDimensions.height); // Overlay primary image
-            downloadImage(canvas, `merged-image-${currentIndex + 1}.png`);
+            ctx.drawImage(primaryImage, 0, 0, canvas.width, canvas.height);
+            addWatermark(ctx, canvas);
+            downloadImage(canvas, 'Framed with Saaz Framer.png');
             currentIndex++;
-            processNextImage(); // Load the next image
+            processNextImage();
         };
 
-        primaryImage.src = URL.createObjectURL(primaryInput.files[0]);
+        primaryImage.src = URL.createObjectURL(primaryImageFile);
     } else {
-        alert('Please select both images.');
+        console.log('Please select both images.');
     }
+}
+
+function addWatermark(ctx, canvas) {
+    const watermarkText = "Framed with Saaz Framer";
+    const fontSize = Math.floor(canvas.width * 0.01); // Smaller font size
+    ctx.font = `${fontSize}px Arial`;
+    ctx.fillStyle = "rgba(255, 255, 255, 0.2)"; // White with more transparency
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    const x = 10; // 10 pixels from the left
+    const y = canvas.height / 2; // Vertically centered
+    ctx.fillText(watermarkText, x, y);
 }
 
 function downloadImage(canvas, filename) {
