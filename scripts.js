@@ -160,10 +160,10 @@ function addWatermark(ctx, canvas) {
     const watermarkText = "Framed with Saaz Framer";
     const fontSize = Math.floor(canvas.width * 0.01); // Smaller font size
     ctx.font = `${fontSize}px Arial`;
-    ctx.fillStyle = "rgba(255, 255, 255, 0.2)"; // White with more transparency
+    ctx.fillStyle = "rgba(255, 255, 255, 0.6)"; // White with more transparency
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
-    const x = 10; // 10 pixels from the left
+    const x = 20; // 10 pixels from the left
     const y = canvas.height / 2; // Vertically centered
     ctx.fillText(watermarkText, x, y);
 }
