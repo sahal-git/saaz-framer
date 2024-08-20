@@ -3,7 +3,8 @@ let secondaryImages = [];
 let currentIndex = 0;
 let primaryImageDimensions = { width: 0, height: 0 };
 let croppedImage;
-let primaryImageFile = null; // Variable to store the primary image file
+let primaryImageFile = null;
+
 const HD_WIDTH = 1920;
 const HD_HEIGHT = 1080;
 
@@ -53,13 +54,7 @@ function processNextImage() {
         }
 
         secondaryPreview.onload = () => {
-            const secondaryImageWidth = secondaryPreview.naturalWidth;
-            const secondaryImageHeight = secondaryPreview.naturalHeight;
-            console.log('Secondary image dimensions:', { width: secondaryImageWidth, height: secondaryImageHeight });
-
             const aspectRatio = primaryImageDimensions.width / primaryImageDimensions.height;
-            const cropWidth = Math.min(HD_WIDTH, secondaryImageWidth);
-            const cropHeight = cropWidth / aspectRatio;
 
             cropper = new Cropper(secondaryPreview, {
                 aspectRatio: aspectRatio,
@@ -72,11 +67,6 @@ function processNextImage() {
                 cropBoxMovable: true,
                 ready() {
                     console.log('Cropper ready.');
-                    cropper.setCropBoxData({
-                        width: cropWidth,
-                        height: cropHeight,
-                    });
-                    console.log('Crop box data set:', cropper.getCropBoxData());
                 }
             });
 
@@ -91,13 +81,7 @@ function processNextImage() {
 
 function cropImage() {
     console.log('Crop button clicked.');
-    const croppedCanvas = cropper.getCroppedCanvas({
-        width: Math.min(HD_WIDTH, cropper.getCanvasData().naturalWidth),
-        height: Math.min(HD_HEIGHT, cropper.getCanvasData().naturalHeight),
-    });
-
-    const ctx = document.getElementById('canvas').getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const croppedCanvas = cropper.getCroppedCanvas();
 
     croppedCanvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
@@ -107,18 +91,19 @@ function cropImage() {
             console.log('Cropped image loaded.');
             document.getElementById('crop-button').style.display = 'none';
             document.getElementById('secondary-preview').style.display = 'none';
+
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
 
-            const primaryAspectRatio = primaryImageDimensions.width / primaryImageDimensions.height;
+            const canvasAspectRatio = primaryImageDimensions.width / primaryImageDimensions.height;
             let canvasWidth, canvasHeight;
 
-            if (HD_WIDTH / HD_HEIGHT > primaryAspectRatio) {
-                canvasWidth = HD_HEIGHT * primaryAspectRatio;
+            if (HD_WIDTH / HD_HEIGHT > canvasAspectRatio) {
+                canvasWidth = HD_HEIGHT * canvasAspectRatio;
                 canvasHeight = HD_HEIGHT;
             } else {
                 canvasWidth = HD_WIDTH;
-                canvasHeight = HD_WIDTH / primaryAspectRatio;
+                canvasHeight = HD_WIDTH / canvasAspectRatio;
             }
 
             canvas.width = canvasWidth;
@@ -128,7 +113,7 @@ function cropImage() {
             overlayPrimaryImage();
         };
         croppedImage.src = url;
-    }, 'image/png');
+    }, 'image/jpeg'); // Save as JPEG format
 }
 
 function overlayPrimaryImage() {
@@ -140,12 +125,9 @@ function overlayPrimaryImage() {
         const primaryImage = new Image();
 
         primaryImage.onload = () => {
-            if (croppedImage) {
-                ctx.drawImage(croppedImage, 0, 0, canvas.width, canvas.height);
-            }
             ctx.drawImage(primaryImage, 0, 0, canvas.width, canvas.height);
             addWatermark(ctx, canvas);
-            downloadImage(canvas, 'Framed with Saaz Framer.png');
+            downloadImage(canvas, `Framed_with_Saaz_Framer_${currentIndex + 1}.jpeg`);
             currentIndex++;
             processNextImage();
         };
@@ -158,20 +140,20 @@ function overlayPrimaryImage() {
 
 function addWatermark(ctx, canvas) {
     const watermarkText = "Framed with Saaz Framer";
-    const fontSize = Math.floor(canvas.width * 0.01); // Smaller font size
+    const fontSize = Math.floor(canvas.width * 0.01);
     ctx.font = `${fontSize}px Arial`;
-    ctx.fillStyle = "rgba(255, 255, 255, 0.6)"; // White with more transparency
+    ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
-    const x = 20; // 10 pixels from the left
-    const y = canvas.height / 2; // Vertically centered
+    const x = 20;
+    const y = canvas.height / 2;
     ctx.fillText(watermarkText, x, y);
 }
 
 function downloadImage(canvas, filename) {
     console.log('Downloading image:', filename);
     const link = document.createElement('a');
-    link.href = canvas.toDataURL('image/png');
+    link.href = canvas.toDataURL('image/jpeg', 1.0); // High-quality JPEG
     link.download = filename;
     link.click();
 }
