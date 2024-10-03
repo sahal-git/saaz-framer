@@ -137,12 +137,12 @@ function overlayPrimaryImage() {
         console.log('Please select both images.');
     }
 }
-/*
+
 function addWatermark(ctx, canvas) {
     const watermarkText = "Framed with Saaz Framer";
     const fontSize = Math.floor(canvas.width * 0.01);
     ctx.font = `${fontSize}px Arial`;
-    ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0)";
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
     ctx.transform = "rotate(-90deg)";
@@ -150,7 +150,7 @@ function addWatermark(ctx, canvas) {
     const y = canvas.height / 2;
     ctx.fillText(watermarkText, x, y);
 }
-*/
+
 function downloadImage(canvas, filename) {
     console.log('Downloading image:', filename);
     const link = document.createElement('a');
