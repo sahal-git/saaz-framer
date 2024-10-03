@@ -140,11 +140,12 @@ function overlayPrimaryImage() {
 
 function addWatermark(ctx, canvas) {
     const watermarkText = "Framed with Saaz Framer";
-    const fontSize = Math.floor(canvas.width * 0.01);
+    const fontSize = Math.floor(canvas.width * 0.001);
     ctx.font = `${fontSize}px Arial`;
-    ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
+    ctx.transform = "rotate(-90deg);"
     const x = 20;
     const y = canvas.height / 2;
     ctx.fillText(watermarkText, x, y);
