@@ -1,6 +1,6 @@
 "use client";
 
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, Frame, Upload, Crop, Settings, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,33 +10,32 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Card } from "@/components/ui/card";
-import { Frame, Upload, Type, Download, Settings } from "lucide-react";
 
 const steps = [
   {
-    icon: Upload,
-    title: "Upload Your Image",
-    description: "Start by uploading the image you want to frame. We support most common image formats including JPG, PNG, and WebP."
+    icon: Frame,
+    title: "Upload Frame Template",
+    description: "Start by uploading your frame template (PNG with transparent background). This is required before you can process any images."
   },
   {
-    icon: Frame,
-    title: "Choose Your Frame",
-    description: "Select from our collection of frames or upload your own custom frame overlay to perfectly complement your image."
+    icon: Upload,
+    title: "Select Images",
+    description: "Choose one or multiple images to frame. The app supports batch processing, allowing you to frame multiple images with the same settings."
+  },
+  {
+    icon: Crop,
+    title: "Interactive Cropping",
+    description: "Use our cropping tool to position each image. The crop area automatically maintains the frame's aspect ratio for perfect alignment."
   },
   {
     icon: Settings,
-    title: "Customize",
-    description: "Adjust frame position, scale, and opacity. Add custom watermarks and fine-tune every aspect of your composition."
-  },
-  {
-    icon: Type,
-    title: "Add Watermark",
-    description: "Protect your work by adding a custom watermark. Control its position, size, and rotation to match your style."
+    title: "Adjust Frame Settings",
+    description: "Fine-tune the frame's opacity to achieve the perfect blend between your image and the frame overlay."
   },
   {
     icon: Download,
-    title: "Download",
-    description: "Once satisfied with your creation, download the final image in high quality, ready for sharing or printing."
+    title: "Batch Download",
+    description: "Download all your framed images at once. Files are automatically named sequentially for easy organization."
   }
 ];
 
@@ -54,24 +53,29 @@ export function HelpButton() {
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">How to Use SAAZ FRAMER</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">Quick Guide: SAAZ FRAMER</DialogTitle>
         </DialogHeader>
-        <div className="mt-4 space-y-6">
+        <div className="mt-4 space-y-4">
           {steps.map((step, index) => (
-            <Card key={index} className="p-4">
+            <Card key={index} className="p-4 transition-all hover:shadow-sm">
               <div className="flex items-start gap-4">
                 <div className="p-2 rounded-lg bg-primary/10">
                   <step.icon className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">
+                  <h3 className="font-semibold text-base">
                     {index + 1}. {step.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground">{step.description}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{step.description}</p>
                 </div>
               </div>
             </Card>
           ))}
+          
+          <div className="pt-4 text-sm text-muted-foreground">
+            <p className="font-medium">💡 Pro Tip:</p>
+            <p>For best results, use PNG frame templates with transparent backgrounds and a resolution of 2000x2000 pixels.</p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
