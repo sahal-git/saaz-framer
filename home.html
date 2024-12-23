@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAAZ FRAMER</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>SAAZ FRAMER</h1>
+        <div class="upload-section">
+            <label for="primary-image" class="upload-label">Upload Primary Image</label>
+            <input type="file" id="primary-image" accept="image/*">
+
+            <label for="secondary-images" class="upload-label">Upload Secondary Images</label>
+            <input type="file" id="secondary-images" accept="image/*" multiple>
+        </div>
+        <div class="preview-section">
+            <img id="secondary-preview" style="display: none;">
+            <canvas id="canvas" style="display: none;"></canvas>
+        </div>
+        <div class="buttons">
+            <button id="crop-button" style="display: none;">Crop & Merge</button>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="scripts.js"></script>
+</body>
+</html>
