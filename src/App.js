@@ -225,7 +225,7 @@ function App() {
           <div className="section-heading">Step 3: Crop your image</div>
           <div className="section-instruction">Adjust the crop area to match your frame. Click <b>Crop & Merge</b> to continue.</div>
           <div style={{textAlign: 'center', marginBottom: 12}}>
-            <img ref={secondaryPreviewRef} id="secondary-preview" alt="Secondary Preview" />
+            <img ref={secondaryPreviewRef} id="secondary-preview" alt="Secondary" />
           </div>
           <div className="buttons" style={{justifyContent: 'center'}}>
             <button id="crop-button" onClick={cropImage}>Crop & Merge</button>
@@ -243,7 +243,7 @@ function App() {
         <div className="preview-section" style={{textAlign: 'center'}}>
           <div className="section-heading" style={{color:'#7c3aed', fontSize:'1.13rem'}}>Thank you for using Saaz Framer!</div>
           <div className="section-instruction">Here is your framed image.</div>
-          {finalImage && <img src={finalImage} alt="Final Framed Image" style={{maxWidth: '100%', height: 'auto', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', margin: '20px auto'}} />}
+          {finalImage && <img src={finalImage} alt="Final Framed" style={{maxWidth: '100%', height: 'auto', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', margin: '20px auto'}} />}
           <button onClick={handleReload}>Start Over</button>
         </div>
       )}
